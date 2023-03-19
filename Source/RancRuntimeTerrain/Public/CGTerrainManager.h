@@ -11,6 +11,7 @@
 #include "RancRuntimeTerrain/Public/Struct/CGTileHandle.h"
 #include "RancRuntimeTerrain/Public/Struct/CGIntVector2.h"
 
+#include "RancRuntimeTerrain/Public/WorldHeightInterface.h"
 #include <Runtime/Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h>
 #include <Runtime/Engine/Classes/GameFramework/Actor.h>
 
@@ -39,8 +40,12 @@ public:
 
 	/* Main entry point for starting terrain generation */
 	UFUNCTION(BlueprintCallable, Category = "RancRuntimeTerrain")
-	void SetupTerrainGenerator(UUFNNoiseGenerator* aHeightmapGenerator, UUFNNoiseGenerator* aBiomeGenerator /*FCGTerrainConfig aTerrainConfig*/);
+	void SetupTerrainGeneratorHeightmap(TScriptInterface<IWorldHeightInterface> worldHeightInterface);
 
+	/* Main entry point for starting terrain generation */
+	UFUNCTION(BlueprintCallable, Category = "RancRuntimeTerrain")
+	void SetupTerrainGeneratorFastNoise(UUFNNoiseGenerator* aHeightmapGenerator, UUFNNoiseGenerator* aBiomeGenerator /*FCGTerrainConfig aTerrainConfig*/);
+	
 	/* Add a new actor to track and generate terrain tiles around */
 	UFUNCTION(BlueprintCallable, Category = "RancRuntimeTerrain")
 	void AddActorToTrack(AActor* aActor);

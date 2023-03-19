@@ -2,7 +2,7 @@
 
 #include "RancRuntimeTerrain/Public/Struct/CGLODConfig.h"
 
-#include <UnrealFastNoisePlugin/Public/UFNBlendModule.h>
+#include "RancRuntimeTerrain/Public/WorldHeightInterface.h"
 #include <UnrealFastNoisePlugin/Public/UFNNoiseGenerator.h>
 
 #include "CGTerrainConfig.generated.h"
@@ -25,6 +25,10 @@ struct FCGTerrainConfig
 	UUFNNoiseGenerator* NoiseGenerator = nullptr;
 	UPROPERTY()
 	UUFNNoiseGenerator* BiomeBlendGenerator = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Data Source")
+	TScriptInterface<IWorldHeightInterface> AlternateWorldHeightInterface;
+	
 	/** Use ASync collision cooking for terrain mesh (Recommended) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|System")
 	bool UseAsyncCollision = true;

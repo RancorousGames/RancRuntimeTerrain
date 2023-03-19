@@ -97,7 +97,7 @@ void ACGTerrainManager::Tick(float DeltaSeconds)
 								 .count();
 
 #ifdef UE_BUILD_DEBUG
-			if (Settings->ShowTimings && updateJob.LOD == 0)
+			if (Settings && Settings->ShowTimings && updateJob.LOD == 0)
 			{
 				GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Red, TEXT("Heightmap gen " + FString::FromInt(updateJob.HeightmapGenerationDuration) + "ms"));
 				GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, TEXT("Erosion gen " + FString::FromInt(updateJob.ErosionGenerationDuration) + "ms"));
@@ -257,11 +257,11 @@ TArray<FCGSector> ACGTerrainManager::GetRelevantSectorsForActor(const AActor* aA
 	result.Add(rootSector);
 
 	const int sweepRange = myTerrainConfig.LODs[myTerrainConfig.LODs.Num() - 1].SectorRadius;
-	const int sweepRange2 = sweepRange * sweepRange;
+	const int sweepRange2 = sweepRange * 2;
 
-	for (int x = 0; x < sweepRange * 2; x++)
+	for (int x = 0; x < sweepRange2; x++)
 	{
-		for (int y = 0; y < sweepRange * 2; y++)
+		for (int y = 0; y < sweepRange2; y++)
 		{
 			FCGSector newSector = FCGSector(rootSector.X - sweepRange + x, rootSector.Y - sweepRange + y, 0);
 			FCGIntVector2 diff = newSector.mySector - rootSector;
@@ -292,7 +292,20 @@ int ACGTerrainManager::GetLODForRange(const int32 aRange)
 	return lowestLOD != 999 ? lowestLOD : -1;
 }
 
-void ACGTerrainManager::SetupTerrainGenerator(UUFNNoiseGenerator* aHeightmapGenerator, UUFNNoiseGenerator* aBiomeGenerator)
+void ACGTerrainManager::SetupTerrainGeneratorHeightmap(TScriptInterface<IWorldHeightInterface> worldHeightInterface)
+{
+	//	myTerrainConfig = aTerrainConfig;
+
+	myTerrainConfig.AlternateWorldHeightInterface = worldHeightInterface;
+
+	myTerrainConfig.TileOffset = FVector(myTerrainConfig.UnitSize * myTerrainConfig.TileXUnits * 0.5f, myTerrainConfig.UnitSize * myTerrainConfig.TileYUnits * 0.5f, 0.0f);
+
+	AllocateAllMeshDataStructures();
+
+	isReady = true;
+}
+
+void ACGTerrainManager::SetupTerrainGeneratorFastNoise(UUFNNoiseGenerator* aHeightmapGenerator, UUFNNoiseGenerator* aBiomeGenerator)
 {
 	//	myTerrainConfig = aTerrainConfig;
 
@@ -308,6 +321,8 @@ void ACGTerrainManager::SetupTerrainGenerator(UUFNNoiseGenerator* aHeightmapGene
 
 void ACGTerrainManager::AddActorToTrack(AActor* aPawn)
 {
+	if (!aPawn)	return;
+	
 	myTrackedActors.Add(aPawn);
 	FCGIntVector2 pawnSector = GetSector(aPawn->GetActorLocation());
 	myActorLocationMap.Add(aPawn, pawnSector);
@@ -317,6 +332,8 @@ void ACGTerrainManager::AddActorToTrack(AActor* aPawn)
 
 void ACGTerrainManager::RemoveActorToTrack(AActor* aPawn)
 {
+	if (!aPawn)	return;
+	
 	myTrackedActors.Remove(aPawn);
 
 	myActorLocationMap.Remove(aPawn);

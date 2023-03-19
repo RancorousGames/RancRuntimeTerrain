@@ -3,6 +3,7 @@
 
 #include <ProceduralMeshComponent/Public/ProceduralMeshComponent.h>
 
+#include "RancRuntimeTerrain/Public/WorldHeightInterface.h"
 #include <UnrealFastNoisePlugin/Public/UFNNoiseGenerator.h>
 
 #include <chrono>
@@ -124,6 +125,9 @@ void FCGTerrainGeneratorWorker::ProcessTerrainMap()
 	const int32 XYunits = workLOD == 0 ? pTerrainConfig.TileXUnits : pTerrainConfig.TileXUnits / pTerrainConfig.LODs[workLOD].ResolutionDivisor;
 	const int32 exUnitSize = workLOD == 0 ? pTerrainConfig.UnitSize : pTerrainConfig.UnitSize * pTerrainConfig.LODs[workLOD].ResolutionDivisor;
 
+
+	UObject* WorldInterfaceObject = pTerrainConfig.AlternateWorldHeightInterface.GetObject();
+	
 	// Calculate the new noisemap
 	for (int y = 0; y < exY; ++y)
 	{
@@ -132,7 +136,7 @@ void FCGTerrainGeneratorWorker::ProcessTerrainMap()
 			int32 worldX = (((workJob.mySector.X * XYunits) + x) * exUnitSize) - exUnitSize;
 			int32 worldY = (((workJob.mySector.Y * XYunits) + y) * exUnitSize) - exUnitSize;
 
-			pMeshData->HeightMap[x + (exX * y)] = pTerrainConfig.NoiseGenerator->GetNoise2D(worldX, worldY);
+			pMeshData->HeightMap[x + (exX * y)] = WorldInterfaceObject ? IWorldHeightInterface::Execute_GetHeightAtPoint(WorldInterfaceObject, worldX, worldY) : pTerrainConfig.NoiseGenerator->GetNoise2D(worldX, worldY);
 		}
 	}
 	// Put heightmap into Red channel
