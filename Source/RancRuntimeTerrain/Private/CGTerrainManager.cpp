@@ -1,16 +1,16 @@
 
-#include "CashGen/Public/CGTerrainManager.h"
-#include "CashGen/Public/CGTerrainGeneratorWorker.h"
-#include "CashGen/Public/CGTile.h"
-#include "CashGen/Public/Struct/CGJob.h"
-#include "CashGen/Public/Struct/CGTileHandle.h"
+#include "RancRuntimeTerrain/Public/CGTerrainManager.h"
+#include "RancRuntimeTerrain/Public/CGTerrainGeneratorWorker.h"
+#include "RancRuntimeTerrain/Public/CGTile.h"
+#include "RancRuntimeTerrain/Public/Struct/CGJob.h"
+#include "RancRuntimeTerrain/Public/Struct/CGTileHandle.h"
 
 #include <chrono>
 
 using namespace std::chrono;
 
-DECLARE_CYCLE_STAT(TEXT("CashGenStat ~ ActorSectorSweeps"), STAT_ActorSectorSweeps, STATGROUP_CashGenStat);
-DECLARE_CYCLE_STAT(TEXT("CashGenStat ~ SectorExpirySweeps"), STAT_SectorExpirySweeps, STATGROUP_CashGenStat);
+DECLARE_CYCLE_STAT(TEXT("RancRuntimeTerrainStat ~ ActorSectorSweeps"), STAT_ActorSectorSweeps, STATGROUP_RancRuntimeTerrainStat);
+DECLARE_CYCLE_STAT(TEXT("RancRuntimeTerrainStat ~ SectorExpirySweeps"), STAT_SectorExpirySweeps, STATGROUP_RancRuntimeTerrainStat);
 
 ACGTerrainManager::ACGTerrainManager()
 {

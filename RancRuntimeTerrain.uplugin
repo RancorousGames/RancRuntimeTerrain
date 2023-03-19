@@ -1,0 +1,35 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.5",
+	"FriendlyName": "RancRuntimeTerrain",
+	"Description": "An Infinite Procedural World Generator",
+	"Category": "Procedural Generation",
+	"CreatedBy": "Rancorous Games",
+	"CreatedByURL": "https://twitter.com/RancorousGames",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EnabledByDefault": false,
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "RancRuntimeTerrain",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ProceduralMeshComponent",
+			"Enabled": true
+		},
+		{
+			"Name": "UnrealFastNoisePlugin",
+			"Enabled": true
+		}
+	],
+	"IsExperimentalVersion": false
+}

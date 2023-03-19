@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "CGTerrainTrackerComponent.h"
-#include "CashGen.h"
+#include "RancRuntimeTerrain.h"
 #include "CGTerrainManager.h"
 #include "Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"

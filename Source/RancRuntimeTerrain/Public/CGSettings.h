@@ -3,10 +3,10 @@
 #include "CGSettings.generated.h"
 
 /**
-* Implements the settings for the CashGen Plugin
+* Implements the settings for the RancRuntimeTerrain Plugin
 */
-UCLASS(config = CashGen, BlueprintType)
-class CASHGEN_API UCGSettings : public UObject
+UCLASS(config = RancRuntimeTerrain, BlueprintType)
+class RANCRUNTIMETERRAIN_API UCGSettings : public UObject
 {
 	GENERATED_BODY()
 

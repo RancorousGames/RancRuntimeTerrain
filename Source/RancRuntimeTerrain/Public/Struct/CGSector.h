@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CashGen/Public/Struct/CGIntVector2.h"
+#include "RancRuntimeTerrain/Public/Struct/CGIntVector2.h"
 
 #include "CGSector.generated.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CashGen/Public/Struct/CGMeshData.h"
+#include "RancRuntimeTerrain/Public/Struct/CGMeshData.h"
 
 #include "CGLODMeshData.generated.h"
 
@@ -9,7 +9,7 @@ struct FCGLODMeshData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CashGen")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain")
 	TArray<FCGMeshData> Data;
 
 };
