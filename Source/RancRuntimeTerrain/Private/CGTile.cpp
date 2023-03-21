@@ -68,7 +68,7 @@ bool ACGTile::TickTransition(float DeltaSeconds)
  ************************************************************************/
 void ACGTile::RepositionAndHide(uint8 aNewLOD)
 {
-	SetActorLocation(FVector((TerrainConfigMaster->TileXUnits * TerrainConfigMaster->UnitSize * mySector.X) - TerrainConfigMaster->TileOffset.X, (TerrainConfigMaster->TileYUnits * TerrainConfigMaster->UnitSize * mySector.Y) - TerrainConfigMaster->TileOffset.Y, 0.0f));
+	SetActorLocation(FVector((TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize * mySector.X) - TerrainConfigMaster->TileOffset.X, (TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize * mySector.Y) - TerrainConfigMaster->TileOffset.Y, 0.0f));
 
 	SetActorHiddenInGame(true);
 
@@ -102,7 +102,7 @@ void ACGTile::UpdateSettings(FCGIntVector2 aOffset, FCGTerrainConfig* aTerrainCo
 		SetActorTickEnabled(TerrainConfigMaster->DitheringLODTransitions && aTerrainConfig->LODs.Num() > 1);
 
 		FString waterCompName = "WaterSMC";
-		FTransform waterTransform = FTransform(FRotator::ZeroRotator, FVector(TerrainConfigMaster->TileXUnits * TerrainConfigMaster->UnitSize * 0.5f, TerrainConfigMaster->TileXUnits * TerrainConfigMaster->UnitSize * 0.5f, 0.0f), FVector(TerrainConfigMaster->TileXUnits * TerrainConfigMaster->UnitSize * 0.01f, TerrainConfigMaster->TileYUnits * TerrainConfigMaster->UnitSize * 0.01f, 1.0f));
+		FTransform waterTransform = FTransform(FRotator::ZeroRotator, FVector(TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize * 0.5f, TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize * 0.5f, 0.0f), FVector(TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize * 0.01f, TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize * 0.01f, 1.0f));
 		MyWaterMeshComponent = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass(), *waterCompName);
 		MyWaterMeshComponent->SetStaticMesh(TerrainConfigMaster->WaterMesh);
 		MyWaterMeshComponent->SetRelativeTransform(waterTransform);
@@ -143,15 +143,15 @@ void ACGTile::UpdateSettings(FCGIntVector2 aOffset, FCGTerrainConfig* aTerrainCo
 
 		if (TerrainConfigMaster->GenerateSplatMap)
 		{
-			myTexture = UTexture2D::CreateTransient(TerrainConfigMaster->TileXUnits, TerrainConfigMaster->TileYUnits, EPixelFormat::PF_B8G8R8A8);
+			myTexture = UTexture2D::CreateTransient(TerrainConfigMaster->BlocksPerSector, TerrainConfigMaster->BlocksPerSector, EPixelFormat::PF_B8G8R8A8);
 			myTexture->AddressX = TA_Clamp;
 			myTexture->AddressY = TA_Clamp;
 
 			myTexture->UpdateResource();
 
 			myRegion = new FUpdateTextureRegion2D();
-			myRegion->Height = TerrainConfigMaster->TileYUnits;
-			myRegion->Width = TerrainConfigMaster->TileXUnits;
+			myRegion->Height = TerrainConfigMaster->BlocksPerSector;
+			myRegion->Width = TerrainConfigMaster->BlocksPerSector;
 			myRegion->SrcX = 0;
 			myRegion->SrcY = 0;
 			myRegion->DestX = 0;
@@ -202,7 +202,7 @@ bool ACGTile::CreateWaterMesh()
 		myTangents.Emplace();
 		myUV0.Emplace();
 		myPositions[i].X = 0.0f;
-		myPositions[i].Y = TerrainConfigMaster->TileYUnits * TerrainConfigMaster->UnitSize;
+		myPositions[i].Y = TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize;
 		myPositions[i].Z = 0.0f;
 		myUV0[i] = FVector2D(1.0f, 0.0f);
 		tangentX = FProcMeshTangent(0.0f, 1.0f, 0.0f);
@@ -215,8 +215,8 @@ bool ACGTile::CreateWaterMesh()
 		myNormals.Emplace();
 		myTangents.Emplace();
 		myUV0.Emplace();
-		myPositions[i].X = TerrainConfigMaster->TileXUnits * TerrainConfigMaster->UnitSize;
-		myPositions[i].Y = TerrainConfigMaster->TileYUnits * TerrainConfigMaster->UnitSize;
+		myPositions[i].X = TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize;
+		myPositions[i].Y = TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize;
 		myPositions[i].Z = 0.0f;
 		myUV0[i] = FVector2D(1.0f, 1.0f);
 
@@ -229,7 +229,7 @@ bool ACGTile::CreateWaterMesh()
 		myNormals.Emplace();
 		myTangents.Emplace();
 		myUV0.Emplace();
-		myPositions[i].X = TerrainConfigMaster->TileXUnits * TerrainConfigMaster->UnitSize;
+		myPositions[i].X = TerrainConfigMaster->BlocksPerSector * TerrainConfigMaster->BlockSize;
 		myPositions[i].Y = 0.0f;
 		myPositions[i].Z = 0.0f;
 		myUV0[i] = FVector2D(0.0f, 1.0f);
@@ -296,7 +296,7 @@ void ACGTile::UpdateMesh(uint8 aLOD, bool aIsInPlaceUpdate,
 	if (aLOD == 0 && TerrainConfigMaster->GenerateSplatMap && TerrainConfigMaster->MakeDynamicMaterialInstance && MaterialInstances.Num() > 0)
 	{
 
-		myTexture->UpdateTextureRegions(0, 1, myRegion, 4 * TerrainConfigMaster->TileXUnits, 4, (uint8*)aTextureData.GetData());
+		myTexture->UpdateTextureRegions(0, 1, myRegion, 4 * TerrainConfigMaster->BlocksPerSector, 4, (uint8*)aTextureData.GetData());
 
 		MaterialInstances[0]->SetTextureParameterValue("SplatMap", myTexture);
 		myWaterMaterialInstance->SetTextureParameterValue("SplatMap", myTexture);

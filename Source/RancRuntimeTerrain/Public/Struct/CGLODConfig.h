@@ -8,7 +8,7 @@ struct FCGLODConfig
 	GENERATED_BODY()
 
 	FCGLODConfig()
-		: SectorRadius(0)
+		: SectorsRadius(0)
 		, ResolutionDivisor(0)
 		, isCollisionEnabled(true)
 	{
@@ -16,7 +16,7 @@ struct FCGLODConfig
 
 	/** Radius in sectors to spawn terrain around an actor */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain")
-	int SectorRadius;
+	int SectorsRadius;
 	/** Factor to reduce sector mesh resolution by from base value */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain")
 	uint8 ResolutionDivisor;

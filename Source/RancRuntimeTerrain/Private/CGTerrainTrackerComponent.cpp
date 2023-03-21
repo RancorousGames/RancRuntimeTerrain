@@ -104,7 +104,7 @@ void UCGTerrainTrackerComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		{
 
 
-			FVector traceStart = mySpawnLocation + FVector(FMath::RandRange(-10000.0f, 10000.0f), FMath::RandRange(-100000.0f, 100000.0f), 5000.0f);
+			FVector traceStart = mySpawnLocation + FVector(0,0, 5000.0f);
 			FVector traceEnd = traceStart + FVector(0.f, 0.f, -50000.0f);
 			FCollisionQueryParams traceParams;
 
@@ -123,7 +123,7 @@ void UCGTerrainTrackerComponent::TickComponent(float DeltaTime, ELevelTick TickT
 				&& hitResult.Location.Z > 10.0f)
 			{
 
-				GetOwner()->SetActorLocation(hitResult.Location + FVector(0.0f, 0.0f, 10.0f));
+				GetOwner()->SetActorLocation(hitResult.Location + FVector(0.0f, 0.0f, 100.0f));
 				ACharacter* character = Cast<ACharacter>(GetOwner());
 				if (character)
 				{

@@ -1,59 +1,95 @@
 ﻿// HeightMapWorldHeight.cpp
+
 #include "CGTextureHeightmap.h"
 #include "Rendering/Texture2DResource.h"
 
-bool UGCTextureHeightmap::Initialize()
-{
+bool UGCTextureHeightmap::Initialize(UTexture2D* HeightMap, float TerrainSamplingScalar, int32 SmoothingLevel)
+{	
+	this->TerrainSamplingScalarValue = TerrainSamplingScalar;
 	if (HeightMap)
 	{
-		FTexture2DMipMap* MyMipMap = &HeightMap->PlatformData->Mips[0];
+		FTexture2DMipMap* MyMipMap = &HeightMap->GetPlatformData()->Mips[0];
 		FByteBulkData* RawImageData = &MyMipMap->BulkData;
 
 		TextureWidth = MyMipMap->SizeX;
 		TextureHeight = MyMipMap->SizeY;
-		if (RawImageData->IsLocked())
+		if (RawImageData->IsLocked()) return false;
+		
+		FormattedGreyscaleData = new uint8[TextureWidth*SmoothingLevel*TextureHeight*SmoothingLevel];
+
+		UE_LOG(LogTemp, Warning, TEXT("Heightmap format: %d"), HeightMap->GetPixelFormat());
+		if (HeightMap->GetPixelFormat() == PF_B8G8R8A8)
 		{
+			const FColor* ImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_ONLY));
+			if (!ImageData) return false;
+			
+			const float smoothingValueCount = (2 * SmoothingLevel + 1) * (2 * SmoothingLevel + 1);
+			
+			for (int32 y = 0; y < TextureHeight; y++)
+			{				
+				//UE_LOG(LogTemp, Warning, TEXT("Pixel Y %f at %d"), pixelY, y);
+				for (int32 x = 0; x < TextureWidth; x++)
+				{
+					float value = 0;
+					float baseValue =  ImageData[y*TextureWidth + x].R;
+
+					if (baseValue > 150)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Pixel"));
+					}
+					
+					if (SmoothingLevel > 1 && x >= SmoothingLevel && y >= SmoothingLevel)
+					{
+
+						// sample all values in a grid around the value we wanna set
+						for (int32 yp = -SmoothingLevel; yp <= SmoothingLevel; yp++)
+						{
+							for (int32 xp = -SmoothingLevel; xp <= SmoothingLevel; xp++)
+							{
+								value += ImageData[(y + yp)*TextureWidth + x + xp].R;
+							}
+						}
+
+						// Set the final value to an average of the sampled values
+						value /= smoothingValueCount;
+					}
+					else
+					{
+						value = ImageData[y*TextureWidth + x].R;
+					}
+				
+					FormattedGreyscaleData[y*TextureWidth + x] = value;
+				}
+			}		
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("HeightMap is not in a supported color format, please use RGBA (PF_B8G8R8A8)"));
 			return false;
 		}
-		FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_ONLY));
+		
 		RawImageData->Unlock();
 		return true;
 	}
-	else
-	{
-		FormattedImageData = nullptr;
-		TextureWidth = 0;
-		TextureHeight = 0;
-	}
 
-		return false;
+	
+	
+	FormattedGreyscaleData = nullptr;
+	TextureWidth = 0;
+	TextureHeight = 0;
+
+	return false;
 }
 
-float max = -10000;
-float min = 10000;
-
-float UGCTextureHeightmap::GetHeightAtPoint_Implementation(float x, float z)
+float UGCTextureHeightmap::GetHeightAtPoint_Implementation(float x, float y)
 {
-	if (!FormattedImageData || TextureWidth <= 0 || TextureHeight <= 0)
+	if (!FormattedGreyscaleData || TextureWidth <= 0 || TextureHeight <= 0)
 	{
 		return 0.0f;
 	}
 
-	int32 pixelX = FMath::Clamp(static_cast<int32>((x*TerrainSamplingScalar) + TextureWidth / 2), 0, TextureWidth - 1);
-	int32 pixelY = FMath::Clamp(static_cast<int32>((z*TerrainSamplingScalar) + TextureWidth / 2), 0, TextureHeight - 1);
+	const uint32 pixelX = FMath::Clamp(static_cast<int32>((x*TerrainSamplingScalarValue) + TextureWidth / 2), 0, TextureWidth - 1);
+	const uint32 pixelY = FMath::Clamp(static_cast<int32>((y*TerrainSamplingScalarValue) + TextureHeight / 2), 0, TextureHeight - 1);
 
-	FColor pixelColor = FormattedImageData[pixelY * TextureWidth + pixelX];
-	float result = pixelColor.R / 255.0f;
-
-	if (result > max)
-	{
-		max = result;
-		UE_LOG(LogTemp, Warning, TEXT("new max height %f %d %d"), result, pixelX, pixelY);
-	}
-	if (result < min)
-	{
-		min = result;
-		UE_LOG(LogTemp, Warning, TEXT("new min height %f %d %d"), result, pixelX, pixelY);
-	}
-	return result;
+	return FormattedGreyscaleData[pixelY * TextureWidth + pixelX] / 255.0f;
 }

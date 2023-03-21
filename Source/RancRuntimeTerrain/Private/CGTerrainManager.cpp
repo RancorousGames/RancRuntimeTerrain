@@ -86,7 +86,7 @@ void ACGTerrainManager::Tick(float DeltaSeconds)
 
 			if (myTerrainConfig.UseInstancedWaterMesh)
 			{
-				FTransform waterTransform = FTransform(FRotator(0.0f), updateJob.myTileHandle.myHandle->GetActorLocation() + FVector(myTerrainConfig.TileXUnits * myTerrainConfig.UnitSize * 0.5f, myTerrainConfig.TileYUnits * myTerrainConfig.UnitSize * 0.5f, 0.0f), FVector(myTerrainConfig.TileXUnits * myTerrainConfig.UnitSize * 0.01f, myTerrainConfig.TileYUnits * myTerrainConfig.UnitSize * 0.01f, 1.0f));
+				FTransform waterTransform = FTransform(FRotator(0.0f), updateJob.myTileHandle.myHandle->GetActorLocation() + FVector(myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * 0.5f, myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * 0.5f, 0.0f), FVector(myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * 0.01f, myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * 0.01f, 1.0f));
 				MyWaterMeshComponent->UpdateInstanceTransform(updateJob.myTileHandle.myWaterISMIndex, waterTransform, true, true, true);
 			}
 
@@ -236,8 +236,8 @@ FCGIntVector2 ACGTerrainManager::GetSector(const FVector& aLocation)
 {
 	FCGIntVector2 sector;
 
-	sector.X = FMath::RoundToInt(aLocation.X / (myTerrainConfig.TileXUnits * myTerrainConfig.UnitSize));
-	sector.Y = FMath::RoundToInt(aLocation.Y / (myTerrainConfig.TileYUnits * myTerrainConfig.UnitSize));
+	sector.X = FMath::RoundToInt(aLocation.X / (myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize));
+	sector.Y = FMath::RoundToInt(aLocation.Y / (myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize));
 
 	return sector;
 }
@@ -256,7 +256,7 @@ TArray<FCGSector> ACGTerrainManager::GetRelevantSectorsForActor(const AActor* aA
 	// Always include the sector the pawn is in
 	result.Add(rootSector);
 
-	const int sweepRange = myTerrainConfig.LODs[myTerrainConfig.LODs.Num() - 1].SectorRadius;
+	const int sweepRange = myTerrainConfig.LODs[myTerrainConfig.LODs.Num() - 1].SectorsRadius;
 	const int sweepRange2 = sweepRange * 2;
 
 	for (int x = 0; x < sweepRange2; x++)
@@ -283,7 +283,7 @@ int ACGTerrainManager::GetLODForRange(const int32 aRange)
 	int lowestLOD = 999;
 	for (int i = myTerrainConfig.LODs.Num() - 1; i >= 0; i--)
 	{
-		if (aRange < (myTerrainConfig.LODs[i].SectorRadius * myTerrainConfig.LODs[i].SectorRadius) && lowestLOD > i)
+		if (aRange < (myTerrainConfig.LODs[i].SectorsRadius * myTerrainConfig.LODs[i].SectorsRadius) && lowestLOD > i)
 		{
 			lowestLOD = i;
 		}
@@ -298,7 +298,7 @@ void ACGTerrainManager::SetupTerrainGeneratorHeightmap(TScriptInterface<IWorldHe
 
 	myTerrainConfig.AlternateWorldHeightInterface = worldHeightInterface;
 
-	myTerrainConfig.TileOffset = FVector(myTerrainConfig.UnitSize * myTerrainConfig.TileXUnits * 0.5f, myTerrainConfig.UnitSize * myTerrainConfig.TileYUnits * 0.5f, 0.0f);
+	myTerrainConfig.TileOffset = FVector(myTerrainConfig.BlockSize * myTerrainConfig.BlocksPerSector * 0.5f, myTerrainConfig.BlockSize * myTerrainConfig.BlocksPerSector * 0.5f, 0.0f);
 
 	AllocateAllMeshDataStructures();
 
@@ -312,7 +312,7 @@ void ACGTerrainManager::SetupTerrainGeneratorFastNoise(UUFNNoiseGenerator* aHeig
 	myTerrainConfig.NoiseGenerator = aHeightmapGenerator;
 	myTerrainConfig.BiomeBlendGenerator = aBiomeGenerator;
 
-	myTerrainConfig.TileOffset = FVector(myTerrainConfig.UnitSize * myTerrainConfig.TileXUnits * 0.5f, myTerrainConfig.UnitSize * myTerrainConfig.TileYUnits * 0.5f, 0.0f);
+	myTerrainConfig.TileOffset = FVector(myTerrainConfig.BlockSize * myTerrainConfig.BlocksPerSector * 0.5f, myTerrainConfig.BlockSize * myTerrainConfig.BlocksPerSector * 0.5f, 0.0f);
 
 	AllocateAllMeshDataStructures();
 
@@ -367,7 +367,7 @@ void ACGTerrainManager::ProcessTilesForActor(const AActor* anActor)
 
 				if (myTerrainConfig.UseInstancedWaterMesh)
 				{
-					FTransform waterTransform = FTransform(FRotator(0.0f), FVector(myTerrainConfig.TileXUnits * myTerrainConfig.UnitSize * (sector.mySector.X - 0.5f), myTerrainConfig.TileYUnits * myTerrainConfig.UnitSize * (sector.mySector.Y - 0.5f), 0.0f), FVector(myTerrainConfig.TileXUnits * myTerrainConfig.UnitSize * 0.01f, myTerrainConfig.TileYUnits * myTerrainConfig.UnitSize * 0.01f, 1.0f));
+					FTransform waterTransform = FTransform(FRotator(0.0f), FVector(myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * (sector.mySector.X - 0.5f), myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * (sector.mySector.Y - 0.5f), 0.0f), FVector(myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * 0.01f, myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * 0.01f, 1.0f));
 					MyWaterMeshComponent->UpdateInstanceTransform(tile.Value, waterTransform, true, true, true);
 				}
 
@@ -400,7 +400,7 @@ void ACGTerrainManager::ProcessTilesForActor(const AActor* anActor)
 				tileHandle.myHandle->RepositionAndHide(10);
 				if (myTerrainConfig.UseInstancedWaterMesh)
 				{
-					MyWaterMeshComponent->UpdateInstanceTransform(tileHandle.myWaterISMIndex, FTransform(FRotator(0.0f), tileHandle.myHandle->GetActorLocation(), FVector(myTerrainConfig.TileXUnits * myTerrainConfig.UnitSize * 0.01f, myTerrainConfig.TileYUnits * myTerrainConfig.UnitSize * 0.01f, 1.0f)), true, true, true);
+					MyWaterMeshComponent->UpdateInstanceTransform(tileHandle.myWaterISMIndex, FTransform(FRotator(0.0f), tileHandle.myHandle->GetActorLocation(), FVector(myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * 0.01f, myTerrainConfig.BlocksPerSector * myTerrainConfig.BlockSize * 0.01f, 1.0f)), true, true, true);
 				}
 			}
 
@@ -441,10 +441,9 @@ void ACGTerrainManager::AllocateAllMeshDataStructures()
 ************************************************************************/
 bool ACGTerrainManager::AllocateDataStructuresForLOD(FCGMeshData* aData, FCGTerrainConfig* aConfig, const uint8 aLOD)
 {
-	int32 numXVerts = aLOD == 0 ? aConfig->TileXUnits + 1 : (aConfig->TileXUnits / myTerrainConfig.LODs[aLOD].ResolutionDivisor) + 1;
-	int32 numYVerts = aLOD == 0 ? aConfig->TileYUnits + 1 : (aConfig->TileYUnits / myTerrainConfig.LODs[aLOD].ResolutionDivisor) + 1;
+	int32 vertCountPerSide = aLOD == 0 ? aConfig->BlocksPerSector + 1 : (aConfig->BlocksPerSector / myTerrainConfig.LODs[aLOD].ResolutionDivisor) + 1;
 
-	int32 numTotalVertices = numXVerts * numYVerts + ((numXVerts - 1) * 2) + ((numXVerts - 1) * 2);
+	int32 numTotalVertices = vertCountPerSide * vertCountPerSide + ((vertCountPerSide - 1) * 2) + ((vertCountPerSide - 1) * 2);
 
 	aData->MyPositions.Reserve(numTotalVertices);
 	aData->MyNormals.Reserve(numTotalVertices);
@@ -453,7 +452,7 @@ bool ACGTerrainManager::AllocateDataStructuresForLOD(FCGMeshData* aData, FCGTerr
 	aData->MyUV0.Reserve(numTotalVertices);
 	if (myTerrainConfig.GenerateSplatMap)
 	{
-		aData->myTextureData.Reserve(aConfig->TileXUnits * aConfig->TileYUnits);
+		aData->myTextureData.Reserve(aConfig->BlocksPerSector * aConfig->BlocksPerSector);
 	}
 
 	// Generate the per vertex data sets
@@ -465,7 +464,7 @@ bool ACGTerrainManager::AllocateDataStructuresForLOD(FCGMeshData* aData, FCGTerr
 
 	if (myTerrainConfig.GenerateSplatMap)
 	{
-		for (int32 i = 0; i < (aConfig->TileXUnits * aConfig->TileYUnits); ++i)
+		for (int32 i = 0; i < (aConfig->BlocksPerSector * aConfig->BlocksPerSector); ++i)
 		{
 			aData->myTextureData.Emplace();
 		}
@@ -475,15 +474,15 @@ bool ACGTerrainManager::AllocateDataStructuresForLOD(FCGMeshData* aData, FCGTerr
 	// Using vectors here is a lot wasteful, but it does make normal/tangent or any other
 	// Geometric calculations based on the heightmap a bit easier. Easy enough to change to floats
 
-	aData->HeightMap.Reserve((numXVerts + 2) * (numYVerts + 2));
-	for (int32 i = 0; i < (numXVerts + 2) * (numYVerts + 2); ++i)
+	aData->HeightMap.Reserve((vertCountPerSide + 2) * (vertCountPerSide + 2));
+	for (int32 i = 0; i < (vertCountPerSide + 2) * (vertCountPerSide + 2); ++i)
 	{
 		aData->HeightMap.Emplace(0.0f);
 	}
 
 	// Triangle indexes
-	int32 terrainTris = ((numXVerts - 1) * (numYVerts - 1) * 6);
-	int32 skirtTris = (((numXVerts - 1) * 2) + ((numYVerts - 1) * 2)) * 6;
+	int32 terrainTris = ((vertCountPerSide - 1) * (vertCountPerSide - 1) * 6);
+	int32 skirtTris = (((vertCountPerSide - 1) * 2) + ((vertCountPerSide - 1) * 2)) * 6;
 	int32 numTris = terrainTris + skirtTris;
 	aData->MyTriangles.Reserve(numTris);
 	for (int32 i = 0; i < numTris; ++i)
@@ -496,15 +495,14 @@ bool ACGTerrainManager::AllocateDataStructuresForLOD(FCGMeshData* aData, FCGTerr
 	int32 thisX, thisY;
 	int32 rowLength;
 
-	rowLength = aLOD == 0 ? aConfig->TileXUnits + 1 : (aConfig->TileXUnits / myTerrainConfig.LODs[aLOD].ResolutionDivisor + 1);
+	rowLength = aLOD == 0 ? aConfig->BlocksPerSector + 1 : (aConfig->BlocksPerSector / myTerrainConfig.LODs[aLOD].ResolutionDivisor + 1);
 	float maxUV = aLOD == 0 ? 1.0f : 1.0f / aLOD;
 
-	int32 exX = aLOD == 0 ? aConfig->TileXUnits : (aConfig->TileXUnits / myTerrainConfig.LODs[aLOD].ResolutionDivisor);
-	int32 exY = aLOD == 0 ? aConfig->TileYUnits : (aConfig->TileYUnits / myTerrainConfig.LODs[aLOD].ResolutionDivisor);
+	int32 currentBlocksPerSector = aLOD == 0 ? aConfig->BlocksPerSector : (aConfig->BlocksPerSector / myTerrainConfig.LODs[aLOD].ResolutionDivisor);
 
-	for (int32 y = 0; y < exY; ++y)
+	for (int32 y = 0; y < currentBlocksPerSector; ++y)
 	{
-		for (int32 x = 0; x < exX; ++x)
+		for (int32 x = 0; x < currentBlocksPerSector; ++x)
 		{
 
 			thisX = x;

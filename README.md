@@ -40,6 +40,7 @@ PrivateDependencyModuleNames.AddRange(new string[] { "RancRuntimeTerrain", "Unre
 	2. Construct GCTextureHeightmap object, Set its height map to a heightmap texture and TerrainSamplingScalar and call intialize then call SetupTerrainGeneratorHeightMap with it
 	3. Create a new UObject blueprint, implement the WorldHeightInterface interface in the blueprints class settings, implement GetHeightAtPoint function, call SetupTerrainGeneratorHeightMap with it
 8. On the  blueprint root detail, set up Ranc Runtime Terrain -> My Terrain Config with appropriate materials. Set up LODs e.g. {{Radius 3, Resolution Div. 1, col yes},{Radius 6, resolution div. 2, col no}}
+	* See explanation of terrain scaling values: https://i.imgur.com/kGVZ83M.png
 9. Add a CGTerrainTrackerComponent to any actors you wish to have terrain formed around
 10. Place blueprint in level and press Play.
 
@@ -47,10 +48,7 @@ PrivateDependencyModuleNames.AddRange(new string[] { "RancRuntimeTerrain", "Unre
 12. Vertex Colours - Red = slope. Green = the biome mask specified in terrain config
 
 
-
-
 Troubleshooting
  * No terrain is drawn - Check your Terrain Config on your terrain manager, especially terrain material and LOD maps. Also check that your character has the CGTerrainTrackerComponent 
  * Whole terrain disappears and my character falls through the world - This can happen if your character moves too fast/teleports. Not yet sure why this happens.
-
-
+ * Terrain is flat with fastnoise - You need much higher values for heightmultiplier and blocksize. e.g. 30000 and 5000. 

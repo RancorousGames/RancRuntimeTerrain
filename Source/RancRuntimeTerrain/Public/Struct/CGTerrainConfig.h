@@ -14,9 +14,6 @@ struct FCGTerrainConfig
 	GENERATED_BODY()
 
 	FCGTerrainConfig()
-		: NoiseGenerator(nullptr)
-		, BiomeBlendGenerator(nullptr)
-		, WaterMaterialInstance(nullptr)
 	{
 	}
 
@@ -28,6 +25,19 @@ struct FCGTerrainConfig
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Data Source")
 	TScriptInterface<IWorldHeightInterface> AlternateWorldHeightInterface;
+
+	/** Width in blocks of a sector. (visible sector count is determined by LODs) */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Generation")
+    int32 BlocksPerSector = 32;
+    /** Size of a single "block" in world units (default 1 cm) */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Generation")
+    float BlockSize = 300.0f;
+    /** Multiplier for heightmap (value of 1000 means height value of noise=1 is 1000 units of heights)*/
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Generation")
+    float HeightMultiplier = 5000.0f;
+	/** Value 0-1 determining what noise value is above ground */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Generation")
+	float NoiseWaterLevel = 0.4f;
 	
 	/** Use ASync collision cooking for terrain mesh (Recommended) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|System")
@@ -43,18 +53,6 @@ struct FCGTerrainConfig
 	FTimespan TileReleaseDelay = FTimespan::FromSeconds(5);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|System")
 	float TileSweepTime = 1.0f;
-	/** Number of blocks along a zone's X axis */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Scale")
-	int32 TileXUnits = 32;
-	/** Number of blocks along a zone's Y axis */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Scale")
-	int32 TileYUnits = 32;
-	/** Size of a single block in world units */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Scale")
-	float UnitSize = 300.0f;
-	/** Multiplier for heightmap*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Scale")
-	float Amplitude = 5000.0f;
 	/** Droplet erosion droplet amount *EXPERIMENTAL* **/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RancRuntimeTerrain|Erosion")
 	int32 DropletAmount = 0;

@@ -23,11 +23,11 @@ private:
 	FCGTerrainConfig& pTerrainConfig;
 	TArray<TCGObjectPool<FCGMeshData>>& pMeshDataPoolsPerLOD;
 	FCGJob workJob;
-	uint8 workLOD;
+	uint8 workLOD = 0;
 
-	FCGMeshData* pMeshData;
+	FCGMeshData* pMeshData = nullptr;
 
-	bool IsThreadFinished;
+	bool IsThreadFinished = false;
 
 	void prepMaps();
 	void ProcessTerrainMap();
