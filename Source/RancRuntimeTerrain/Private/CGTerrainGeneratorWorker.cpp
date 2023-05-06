@@ -128,15 +128,15 @@ void FCGTerrainGeneratorWorker::ProcessTerrainMap()
 
 	UObject* WorldInterfaceObject = pTerrainConfig.AlternateWorldHeightInterface.GetObject();
 
-	int32 SectorCenterOffset = BlocksPerSector / 2 * currentBlockSize;
+	int32 SectorCenterOffset = BlocksPerSector / 2;
 	
 	// Calculate the new noisemap
 	for (int y = 0; y < exY; ++y)
 	{
 		for (int x = 0; x < exX; ++x)
 		{
-			const int32 worldX = (((workJob.mySector.X * BlocksPerSector) + x) * currentBlockSize) - SectorCenterOffset;
-			const int32 worldY = (((workJob.mySector.Y * BlocksPerSector) + y) * currentBlockSize) - SectorCenterOffset;
+			const int32 worldX = (((workJob.mySector.X * BlocksPerSector) + x)) - SectorCenterOffset;
+			const int32 worldY = (((workJob.mySector.Y * BlocksPerSector) + y)) - SectorCenterOffset;
 
 			float height = WorldInterfaceObject ? IWorldHeightInterface::Execute_GetHeightAtPoint(WorldInterfaceObject, worldX, worldY) : pTerrainConfig.NoiseGenerator->GetNoise2D(worldX, worldY);
 			pMeshData->HeightMap[x + (exX * y)] = height - pTerrainConfig.NoiseWaterLevel;
@@ -175,8 +175,8 @@ void FCGTerrainGeneratorWorker::ProcessTerrainMap()
 		{
 			for (int x = 0; x < exX; ++x)
 			{
-				int32 worldX = (((workJob.mySector.X * (exX - 1)) + x) * currentBlockSize);
-				int32 worldY = (((workJob.mySector.Y * (exX - 1)) + y) * currentBlockSize);
+				int32 worldX = (((workJob.mySector.X * (exX - 1)) + x));
+				int32 worldY = (((workJob.mySector.Y * (exX - 1)) + y));
 				float val = pTerrainConfig.BiomeBlendGenerator->GetNoise2D(worldX, worldY);
 
 				pMeshData->MyColours[x + (exX * y)].G = FMath::Clamp(FMath::RoundToInt(((val + 1.0f) / 2.0f) * 256), 0, 255);

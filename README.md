@@ -37,7 +37,7 @@ PrivateDependencyModuleNames.AddRange(new string[] { "RancRuntimeTerrain", "Unre
 6. Create a new Blueprint based on CGTerrainManager
 7. OnBeginPlay in the blueprint, call either SetupTerrainGeneratorFastNoise or SetupTerrainGeneratorHeightMap
 	1. SetupTerrainGeneratorFastNoise using UnrealFastNoisePlugin, see image https://i.imgur.com/qXyZ38E.png or check out the CashGen demo
-	2. Construct GCTextureHeightmap object, Set its height map to a heightmap texture and TerrainSamplingScalar and call intialize then call SetupTerrainGeneratorHeightMap with it
+	2. Construct GCTextureHeightmap object, call intialize with a positive sampling scalar and a greyscale heightmap texture (with compression setting UserInterface2D RGBA)  then call SetupTerrainGeneratorHeightMap with it
 	3. Create a new UObject blueprint, implement the WorldHeightInterface interface in the blueprints class settings, implement GetHeightAtPoint function, call SetupTerrainGeneratorHeightMap with it
 8. On the  blueprint root detail, set up Ranc Runtime Terrain -> My Terrain Config with appropriate materials. Set up LODs e.g. {{Radius 3, Resolution Div. 1, col yes},{Radius 6, resolution div. 2, col no}}
 	* See explanation of terrain scaling values: https://i.imgur.com/kGVZ83M.png
