@@ -6,19 +6,19 @@
 
 #include "CGTerrainTrackerComponent.generated.h"
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RANCRUNTIMETERRAIN_API UCGTerrainTrackerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 	bool isSetup = false;
-public:	
+
+public:
 	// Sets default values for this component's properties
 	UCGTerrainTrackerComponent();
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 
 
 	/* Sets actor invisible until inital terrain generation is complete */
@@ -31,7 +31,7 @@ public:
 
 	/* Attempts to teleport character to terrain surface when terrain generation is complete */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RancRuntimeTerrain")
-	bool TeleportToSurfaceOnTerrainComplete  = false;
+	bool TeleportToSurfaceOnTerrainComplete = false;
 
 	void OnTerrainComplete();
 
@@ -42,13 +42,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RancRuntimeTerrain")
 	int32 SpawnRayCastsPerFrame = 10;
 
+
+	UPROPERTY(BlueprintReadOnly, Category = "RancRuntimeTerrain")
+	bool IsTerrainComplete = false;
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	virtual void OnUnregister() override;
 
-	bool isTerrainComplete = false;
+
 	bool isSpawnPointFound = false;
 
 };

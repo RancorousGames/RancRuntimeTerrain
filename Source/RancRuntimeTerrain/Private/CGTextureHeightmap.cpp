@@ -33,11 +33,6 @@ bool UGCTextureHeightmap::Initialize(UTexture2D* HeightMap, float TerrainSamplin
 					float value = 0;
 					float baseValue =  ImageData[y*TextureWidth + x].R;
 
-					if (baseValue > 150)
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Pixel"));
-					}
-					
 					if (SmoothingLevel > 1 && x >= SmoothingLevel && y >= SmoothingLevel)
 					{
 

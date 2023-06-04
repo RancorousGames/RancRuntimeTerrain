@@ -33,6 +33,7 @@ public:
 
 	/* Event called when initial terrain generation is complete */
 	DECLARE_EVENT(ACGTerrainManager, FTerrainCompleteEvent)
+
 	FTerrainCompleteEvent& OnTerrainComplete() { return TerrainCompleteEvent; }
 
 	/* Returns true once terrain has been configured */
@@ -45,7 +46,7 @@ public:
 	/* Main entry point for starting terrain generation */
 	UFUNCTION(BlueprintCallable, Category = "RancRuntimeTerrain")
 	void SetupTerrainGeneratorFastNoise(UUFNNoiseGenerator* aHeightmapGenerator, UUFNNoiseGenerator* aBiomeGenerator /*FCGTerrainConfig aTerrainConfig*/);
-	
+
 	/* Add a new actor to track and generate terrain tiles around */
 	UFUNCTION(BlueprintCallable, Category = "RancRuntimeTerrain")
 	void AddActorToTrack(AActor* aActor);
@@ -72,6 +73,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "RancRuntimeTerrain|Events")
 	void OnAfterTileCreated(ACGTile* tile);
+
+	UPROPERTY(BlueprintReadOnly, Category = "RancRuntimeTerrain")
+	bool IsTerrainComplete = false;
 
 protected:
 	void BroadcastTerrainComplete()
@@ -112,10 +116,8 @@ private:
 	TArray<AActor*> myTrackedActors;
 	TMap<AActor*, FCGIntVector2> myActorLocationMap;
 
-		// Sweep tracking
+	// Sweep tracking
 	float myTimeSinceLastSweep = 0.0f;
 	const float mySweepTime = 2.0f;
 	uint8 myActorIndex = 0;
-
-	bool myIsTerrainComplete = false;
 };

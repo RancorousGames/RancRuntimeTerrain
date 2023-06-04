@@ -34,7 +34,7 @@ void UCGTerrainTrackerComponent::OnTerrainComplete()
 		}
 	}
 
-	isTerrainComplete = true;
+	IsTerrainComplete = true;
 
 }
 
@@ -96,7 +96,7 @@ void UCGTerrainTrackerComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		
 	}
 
-	if (!isSpawnPointFound && isTerrainComplete && TeleportToSurfaceOnTerrainComplete)
+	if (!isSpawnPointFound && IsTerrainComplete && TeleportToSurfaceOnTerrainComplete)
 	{
 		int32 raycastsRemainingThisFrame = SpawnRayCastsPerFrame;
 

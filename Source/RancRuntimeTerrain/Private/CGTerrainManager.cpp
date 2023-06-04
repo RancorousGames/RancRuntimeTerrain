@@ -181,13 +181,13 @@ void ACGTerrainManager::Tick(float DeltaSeconds)
 			myTileHandleMap.Remove(key);
 		}
 	}
-	if (!myIsTerrainComplete &&
+	if (!IsTerrainComplete &&
 		myTrackedActors.Num() > 0 &&
 		myPendingJobQueue.IsEmpty() &&
 		myUpdateJobQueue.IsEmpty())
 	{
 		BroadcastTerrainComplete();
-		myIsTerrainComplete = true;
+		IsTerrainComplete = true;
 	}
 }
 
@@ -207,6 +207,7 @@ TPair<ACGTile*, int32> ACGTerrainManager::GetAvailableTile()
 	if (!result.Key)
 	{
 		result.Key = GetWorld()->SpawnActor<ACGTile>(ACGTile::StaticClass(), FVector(0.0f, 0.0f, -10000.0f), FRotator(0.0f));
+		result.Key->Tags.AddUnique(TEXT("Terrain"));
 		if (myTerrainConfig.UseInstancedWaterMesh)
 		{
 			result.Value = MyWaterMeshComponent->AddInstance(FTransform(FRotator(0.0f), FVector(0.0f, 0.0f, -10000.0f), FVector::OneVector));
