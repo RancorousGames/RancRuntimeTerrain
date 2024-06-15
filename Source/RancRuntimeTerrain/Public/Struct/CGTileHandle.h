@@ -21,7 +21,7 @@ struct FCGTileHandle
 	int32 myWaterISMIndex;
 	// Handle to the tile actor
 	UPROPERTY()
-	ACGTile* myHandle;
+	ACGTile* myHandle = nullptr;
 	// Bitmask to indicate which players require this sector
 	FDateTime myLastRequiredTimestamp;
 };
