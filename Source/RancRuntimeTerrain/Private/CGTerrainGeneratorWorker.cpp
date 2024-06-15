@@ -492,7 +492,7 @@ void FCGTerrainGeneratorWorker::GetNormalFromHeightMapForVertex(const int32& ver
 {
 	FVector result;
 
-	FVector tangentVec, bitangentVec;
+	//FVector tangentVec, bitangentVec;
 
 	const int32 rowLength = workLOD == 0 ? pTerrainConfig.BlocksPerSector + 1 : (pTerrainConfig.BlocksPerSector / (pTerrainConfig.LODs[workLOD].ResolutionDivisor) + 1);
 	const int32 heightMapRowLength = rowLength + 2;
