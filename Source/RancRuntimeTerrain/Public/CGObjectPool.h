@@ -71,7 +71,7 @@ private:
 				// Every 100ms, we check if shouldContinueToBlock still returns true. If not, we abort.
 				if (cv_.wait_for(lock, std::chrono::milliseconds(100), [&]() { return freeObjects_.Num() > 0; })) {
 					// We found an object. Borrow and return it.
-					return freeObjects_.Pop(false);
+					return freeObjects_.Pop(EAllowShrinking::No);
 				}
 			} while (shouldContinueToBlock());
 
